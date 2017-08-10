@@ -1,0 +1,150 @@
+# List of Apache Geode / Gemfire Locators
+servers:
+  - host: "localhost"
+    port: 1099
+    #serviceUrl:
+    username: ""
+    password: ""
+    displayName: "GemFire1"
+    #Metric Overrides. Change this if you want to transform the metric key or value or its properties.
+    #metricOverrides:
+    #  - metricKey: ".*"
+    #    disabled: true
+
+#prefix used to show metrics in AppDynamics
+#metricPrefix:  "Custom Metrics|GemFire|"
+
+#This will report metrics only to the specified tier. Please refer to the 'metric path' section of this document https://docs.appdynamics.com/display/PRO43/Build+a+Monitoring+Extension+Using+Java  for instructions on how to obtain the component ID.
+metricPrefix: "Server|Component:<ComponentID>|Custom Metrics|GemFire"
+
+metrics:
+  system:
+    mbean: "GemFire:service=System,type=Distributed"
+    metrics:
+      LocatorCount:
+        appDynamicsName: "LocatorCount" # optional: Describes the name within AppDynamics
+        scale: 1 # optional: Defines a value that the read value is multiplied with (interesting to stuff like hit ratios)
+      MemberCount: # please note that you can configure just the value. Do not forget the colon though.
+      TotalRegionCount:
+      TotalRegionEntryCount:
+      NumClients:
+      TotalHitCount:
+      TotalMissCount:
+      AverageReads:
+      AverageWrites:
+      DiskReadsRate:
+      DiskWritesRate:
+      GarbageCollectionCount:
+      TransactionCommitted:
+      TransactionRolledBack:
+
+  regions:
+    mbean: "GemFire:service=Region,name=*,type=Distributed"
+    metrics:
+      Name:
+      MemberCount:
+      RegionType:
+      HitRatio:
+        scale: 100
+      HitCount:
+      MissCount:
+      EntrySize:
+      DiskUsage:
+      AverageReads:
+      AverageWrites:
+      EntrySize:
+
+  servers:
+    mbean: "GemFire:type=Member,member=*"
+    metrics:
+      AverageReads:
+      AverageWrites:
+      BytesReceivedRate:
+      BytesSentRate:
+      CpuUsage:
+      CurrentHeapSize:
+      CreatesRate:
+      DeserializationAvgLatency:
+      DeserializationLatency:
+      DeserializationRate:
+      DestroysRate:
+      DiskFlushAvgLatency:
+      DiskReadsRate:
+      DiskWritesRate:
+      FreeHeapSize:
+      FreeMemory:
+      GarbageCollectionCount:
+      GarbageCollectionTime:
+      GetsAvgLatency:
+      GetsRate:
+      LoadAverage:
+      LoadsAverageLatency:
+      LockTimeout:
+      LockWaitsInProgress:
+      LruDestroyRate:
+      LruEvictionRate:
+      MaxMemory:
+      MaximumHeapSize:
+      NumThreads:
+      OffHeapCompactionTime:
+      OffHeapFragmentation:
+      OffHeapFreeMemory:
+      OffHeapMaxMemory:
+      OffHeapObjects:
+      OffHeapUsedMemory:
+      PartitionRegionCount:
+      PutAllAvgLatency:
+      PutAllRate:
+      PutsAvgLatency:
+      PutsRate:
+      ReplyWaitsCompleted:
+      ReplyWaitsInProgress:
+      SerializationAvgLatency:
+      SerializationLatency:
+      SerializationRate:
+      TotalBackupCompleted:
+      TotalBackupInProgress:
+      TotalBucketCount:
+      TotalDiskTasksWaiting:
+      TotalDiskUsage:
+      TotalFileDescriptorOpen:
+      TotalHitCount:
+      TotalLoadsCompleted:
+      TotalLockWaitTime:
+      TotalMissCount:
+      TotalPrimaryBucketCount:
+      TotalRegionCount:
+      TotalRegionEntryCount:
+      TransactionCommitsAvgLatency:
+      TransactionCommitsRate:
+      TransactionCommittedTotalCount:
+      TransactionRolledBackTotalCount:
+      UsedMemory:
+      VisibleNodes:
+
+  regionDetails:
+    mbean: "GemFire:service=Region,name=*,type=Member,member=*"
+    metrics:
+      Name:
+      MemberCount:
+      RegionType:
+      HitRatio:
+        scale: 100
+      HitCount:
+      MissCount:
+      EntrySize:
+      DiskUsage:
+      AverageReads:
+      AverageWrites:
+      EntrySize:
+
+  #serverDetails
+  #discStoreDetails
+  #cacheServiceDetails
+
+
+# number of concurrent tasks
+numberOfThreads: 5
+
+#timeout for the thread
+threadTimeout: 30

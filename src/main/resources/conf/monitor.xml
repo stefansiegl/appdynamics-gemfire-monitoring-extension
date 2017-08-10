@@ -1,0 +1,24 @@
+    <monitor>
+        <name>GemFireApacheGeodeMonitor</name>
+        <type>managed</type>
+        <description>Monitoring extension for Pivotal GemFire and Apache Geode</description>
+        <monitor-configuration></monitor-configuration>
+        <enabled>true</enabled>
+        <monitor-run-task>
+                <execution-style>periodic</execution-style>
+                <execution-frequency-in-seconds>60</execution-frequency-in-seconds>
+                <name>GemFire/Geode Monitor Run Task</name>
+                <display-name>GemFire/Geode Monitor Task</display-name>
+                <description>GemFire/Geode Monitor Task</description>
+                <type>java</type>
+                <execution-timeout-in-secs>60</execution-timeout-in-secs>
+                <task-arguments>
+                    <!-- config file-->
+                    <argument name="config-file" is-required="true" default-value="monitors/GemFireMonitor/config.yml" />
+                </task-arguments>
+                <java-task>
+                        <classpath>gemfire-monitoring-extension.jar</classpath>
+                        <impl-class>com.appdynamics.extensions.cassandra.CassandraMonitor</impl-class>
+                </java-task>
+        </monitor-run-task>
+</monitor>
