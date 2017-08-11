@@ -18,19 +18,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by stefan on 09.08.17.
+ * This class does the heavy lifting of reading the configuration, querying the JMX Beans and writing it to AppDynamics.
  */
 public class GemFireMonitorTask implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(GemFireMonitorTask.class);
-//    private static final BigDecimal ERROR_VALUE = BigDecimal.ZERO;
-//    private static final BigDecimal SUCCESS_VALUE = BigDecimal.ONE;
-//    private static final String METRICS_COLLECTION_SUCCESSFUL = "Metrics Collection Successful";
-//    private String metricPrefix;
-//    private MetricWriteHelper metricWriter;
-//    private Map server;
-//    private JMXConnectionAdapter jmxConnectionAdapter;
-//    private List<Map> configMBeans;
-//    private String serverName;
 
     private String serverName;
     private Map serverInformation;
@@ -56,6 +47,11 @@ public class GemFireMonitorTask implements Runnable {
 
         public Builder metricWriter (MetricWriteHelper metricWriter) {
             task.metricWriter = metricWriter;
+            return this;
+        }
+
+        public Builder metricPrefix (String metricPrefix) {
+            task.metricPrefix = metricPrefix;
             return this;
         }
 
@@ -113,7 +109,8 @@ public class GemFireMonitorTask implements Runnable {
                         String metricType = "AVG.AVG.COL";
 
                         metricWriter.printMetric(createMetricPath(metricSectionName, objectName, appDynamicsName), value, metricType);
-                        // System.out.printf("Read %s %s %s %s %s %s %s %s \n", serverName, mbean, objectName, metricSectionName, mbeanAttribute, appDynamicsName, scale, value);
+                        //System.out.printf("Read %s %s %s %s %s %s %s %s \n", serverName, mbean, objectName, metricSectionName, mbeanAttribute, appDynamicsName, scale, value);
+                        System.out.printf("%s %s %s  \n", createMetricPath(metricSectionName, objectName, appDynamicsName), value, metricType);
 
                     }
                 }
@@ -122,12 +119,9 @@ public class GemFireMonitorTask implements Runnable {
             logger.error("Error in Gemfire/Geode Monitor for Server {}", serverName, e);
         } finally {
             logger.debug("Finished Running Gemfire/Geode Monitor for server {}", serverName);
-            try {
-                con.close();
-            } catch (IOException e) {
-                logger.warn("Error in Gemfire/Geode Monitor for Server {}", serverName, e);
-            }
         }
+
+
 
 
         // we iterate over all given configurations
@@ -167,17 +161,31 @@ public class GemFireMonitorTask implements Runnable {
 
                     String metricType = "AVG.AVG.COL";
 
-                    metricWriter.printMetric(createMetricPath(metricSectionName, objectName, appDynamicsName), value, metricType);
+                    metricWriter.printMetric(createMetricPath(metricSectionName, extractObjectName(objectName), appDynamicsName), value, metricType);
               //  public void printMetric(String metricPath, BigDecimal value, String metricType) {
                     // read values:
                     // System.out.printf("Read %s %s %s %s %s %s %s %s \n", serverName, mbean, objectName, metricSectionName, mbeanAttribute, appDynamicsName, scale, value);
-
+                    System.out.printf("%s %s %s \n", createMetricPath(metricSectionName, extractObjectName(objectName), appDynamicsName), value, metricType);
 
                 }
             }
         }
 
         System.out.println("finished");
+    }
+
+    private String extractObjectName (String objectName) {
+        // GemFire:service=System,type=Distributed
+        if (objectName.contains("service=System")) {
+            return "System";
+        }
+
+        // GemFire:type=Member,member=locator1
+        if (objectName.contains("type=Member")) {
+            return objectName.split("\\=")[2];
+        }
+
+        throw new RuntimeException("Unknown objectname pattern, please provide a mapping to an appdynamics name. "+objectName);
     }
 
     /**

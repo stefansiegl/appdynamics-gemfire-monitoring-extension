@@ -26,7 +26,9 @@ public class GemfireMonitor extends AManagedMonitor {
     private static final Logger logger = LoggerFactory.getLogger(GemfireMonitor.class);
     private MonitorConfiguration configuration;
 
-    GemfireMonitor(){}
+    public GemfireMonitor(){
+        logger.info(getLogVersion());
+    }
 
     public TaskOutput execute (Map<String, String> map, TaskExecutionContext taskExecutionContext) throws
             TaskExecutionException {
@@ -80,6 +82,7 @@ public class GemfireMonitor extends AManagedMonitor {
                                     serverInformation(server).
                                     metricInformation((Map) config.get("metrics")).
                                     metricWriter(configuration.getMetricWriter()).
+                                    metricPrefix(configuration.getMetricPrefix()).
                                     build();
 
                             configuration.getExecutorService().execute(task);

@@ -3,6 +3,7 @@ package de.novatec.appdynamics.extensions.gemfire;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import de.novatec.appdynamics.extensions.gemfire.connection.RetryMBeanConnection;
 
 import javax.management.*;
 import javax.management.Attribute;
@@ -24,7 +25,6 @@ public class JMXConnectionAdapter {
     String password;
     int port;
     String host;
-    JMXConnector jmxConnector;
     MBeanServerConnection connection;
 
     private JMXConnectionAdapter() {}
@@ -62,22 +62,12 @@ public class JMXConnectionAdapter {
                 adapter.serviceUrl = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + adapter.host + ":" + adapter.port + "/jmxrmi");
             }
 
-            final Map<String, Object> env = new HashMap<String, Object>();
-            if (!Strings.isNullOrEmpty(adapter.username)) {
-                env.put(JMXConnector.CREDENTIALS, new String[]{adapter.username, adapter.password});
-                adapter.jmxConnector = JMXConnectorFactory.connect(adapter.serviceUrl, env);
-            } else {
-                adapter.jmxConnector = JMXConnectorFactory.connect(adapter.serviceUrl);
-            }
-            if (adapter.jmxConnector == null) {
-                throw new IOException("Unable to connect to Mbean server");
-            }
-
-            adapter.connection = adapter.jmxConnector.getMBeanServerConnection();
+            adapter.connection = RetryMBeanConnection.getRetryConnectionFor(adapter.serviceUrl, adapter.username, adapter.password);
 
             return adapter;
         }
     }
+
 
     public Map<String, Map<String, Object>> getAllAttributeValues(String mbean) throws IOException {
         Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
@@ -96,9 +86,17 @@ public class JMXConnectionAdapter {
                 result.put(objectInstance.getObjectName().toString(), values);
             }
             return result;
-        } catch (Exception e) {
-            throw new IOException("Base Exception is "+e.getMessage());
+        } catch (InstanceNotFoundException e) {
+            e.printStackTrace();
+        } catch (MalformedObjectNameException e) {
+            e.printStackTrace();
+        } catch (IntrospectionException e) {
+            e.printStackTrace();
+        } catch (ReflectionException e) {
+            e.printStackTrace();
         }
+
+        return new HashMap<String, Map<String, Object>>();
     }
 
     private String[] attributeInfosToStringArray (MBeanAttributeInfo[] attInfos) {
@@ -108,12 +106,6 @@ public class JMXConnectionAdapter {
             attNames[i++] = attInfo.getName();
         }
         return attNames;
-    }
-
-    public void close () throws IOException {
-        if (jmxConnector != null) {
-            jmxConnector.close();
-        }
     }
 
     public Set<ObjectInstance> queryMBeans (JMXConnector jmxConnection, ObjectName objectName) throws IOException {
