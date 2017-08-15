@@ -1,0 +1,45 @@
+# List of Apache Geode / Gemfire Locators
+servers:
+  - host: "localhost"
+    port: 1099
+    #serviceUrl:
+    username: ""
+    password: ""
+    displayName: "GemFire1"
+
+#This will report metrics only to the specified tier. Please refer to the 'metric path' section of this document https://docs.appdynamics.com/display/PRO43/Build+a+Monitoring+Extension+Using+Java  for instructions on how to obtain the component ID.
+metricPrefix: "PREFIX"
+
+# Metrics to be collected. If you want another metric, please add them in the same pattern. If you want to
+# remove a metric simply comment the line.
+metrics:
+  system:
+    mbean: "GemFire:service=System,type=Distributed"
+    metrics:
+      LocatorCount:
+        appDynamicsName: "LocatorCount" # optional: Describes the name within AppDynamics
+        scale: 1 # optional: Defines a value that the read value is multiplied with (interesting to stuff like hit ratios)
+      MemberCount: # please note that you can configure just the value. Do not forget the colon though.
+
+  regions:
+    mbean: "GemFire:service=Region,name=*,type=Distributed"
+    metrics:
+      MemberCount:
+
+  servers:
+    mbean: "GemFire:type=Member,member=*"
+    metrics:
+      VisibleNodes:
+
+  regionDetails:
+    mbean: "GemFire:service=Region,name=*,type=Member,member=*"
+    metrics:
+      MemberCount:
+
+
+
+# number of concurrent tasks
+numberOfThreads: 5
+
+#timeout for the thread
+threadTimeout: 30

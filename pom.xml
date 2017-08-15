@@ -78,9 +78,29 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations-java5</artifactId>
-            <version>RELEASE</version>
+            <groupId>io.pivotal.gemfire</groupId>
+            <artifactId>geode-core</artifactId>
+            <version>9.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.pivotal.gemfire</groupId>
+            <artifactId>geode-wan</artifactId>
+            <version>9.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.pivotal.gemfire</groupId>
+            <artifactId>geode-cq</artifactId>
+            <version>9.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -203,6 +223,11 @@
                 <enabled>false</enabled>
             </snapshots>
             <url>https://github.com/Appdynamics/maven-repo/raw/master/releases</url>
+        </repository>
+        <repository>
+            <id>gemfire-release-repo</id>
+            <name>Pivotal GemFire Release Repository</name>
+            <url>https://commercial-repo.pivotal.io/data3/gemfire-release-repo/gemfire</url>
         </repository>
     </repositories>
 
