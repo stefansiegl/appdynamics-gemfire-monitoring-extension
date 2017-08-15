@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.management.*;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
@@ -18,11 +19,16 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by stefan on 11.08.17.
+ *  Dynamic proxy for the connection to the JMX server that allows for transparent retry operations in case one request fails.
+ *
+ * @author Stefan Siegl (sieglst@googlemail.com)
+ * @author Stefan Siegl - APM competence group NovaTec Consulting (stefan.siegl@novatec-gmbh.de)
  */
 public class RetryMBeanConnection implements InvocationHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(RetryMBeanConnection.class);
+
+    private final static int MAXIMUM_RETRIES = 5;
 
     private JMXConnector connector;
     private MBeanServerConnection connection;
@@ -30,15 +36,25 @@ public class RetryMBeanConnection implements InvocationHandler {
     private String username;
     private String password;
     private int errorCount = 0;
-    private final static int MAXIMUM_RETRIES = 5;
 
-    public RetryMBeanConnection(JMXServiceURL serviceUrl, String username, String password) {
+    private RetryMBeanConnection(JMXServiceURL serviceUrl, String username, String password) {
         this.serviceUrl = serviceUrl;
         this.username = username;
         this.password = password;
     }
 
-    public static MBeanServerConnection getRetryConnectionFor (JMXServiceURL serviceUrl, String username, String password) throws IOException {
+    /**
+     * Provides a proxied MBeanServerConnection that automatically and transparently to the client performs reconnects
+     * in case of temporary connection problems.
+     *
+     * @param serviceUrl the connection URL to the JMX server
+     * @param username the username
+     * @param password the passwort
+     * @return a proxied MBeanServerConnection that automatically and transparently to the client performs reconnects
+     * in case of temporary connection problems.
+     * @throws IOException thrown if after a number of retries connection problems still exist.
+     */
+    public static MBeanServerConnection getRetryConnectionFor (@Nonnull JMXServiceURL serviceUrl, String username, String password) throws IOException {
         RetryMBeanConnection retryMBeanConnection = new RetryMBeanConnection(serviceUrl, username, password);
         return (MBeanServerConnection) Proxy.newProxyInstance(MBeanServerConnection.class.getClassLoader(), new Class[] {MBeanServerConnection.class}, retryMBeanConnection);
     }

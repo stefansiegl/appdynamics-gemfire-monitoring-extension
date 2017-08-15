@@ -26,7 +26,8 @@ Run maven clean install. You find the extension at target/GemFireMonitor-x.zip
 
 Install the extension
 ---------------------
-
+Copy and extract the GemFireMonitor-<version>.zip in the monitors folder of the machine agent. (This should create a
+GemFire folder within the monitors folder).
 
 Configuration
 -------------
@@ -35,3 +36,4 @@ what credentials you need in order to connect.
 
 License
 -------
+Licensed under Apache License Version 2.0.

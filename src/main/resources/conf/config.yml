@@ -17,6 +17,8 @@ servers:
 #This will report metrics only to the specified tier. Please refer to the 'metric path' section of this document https://docs.appdynamics.com/display/PRO43/Build+a+Monitoring+Extension+Using+Java  for instructions on how to obtain the component ID.
 metricPrefix: "Server|Component:<ComponentID>|Custom Metrics|GemFire"
 
+# Metrics to be collected. If you want another metric, please add them in the same pattern. If you want to
+# remove a metric simply comment the line.
 metrics:
   system:
     mbean: "GemFire:service=System,type=Distributed"
@@ -41,9 +43,9 @@ metrics:
   regions:
     mbean: "GemFire:service=Region,name=*,type=Distributed"
     metrics:
-      Name:
+      #Name:
       MemberCount:
-      RegionType:
+      #RegionType:
       HitRatio:
         scale: 100
       HitCount:
@@ -125,9 +127,7 @@ metrics:
   regionDetails:
     mbean: "GemFire:service=Region,name=*,type=Member,member=*"
     metrics:
-      Name:
       MemberCount:
-      RegionType:
       HitRatio:
         scale: 100
       HitCount:

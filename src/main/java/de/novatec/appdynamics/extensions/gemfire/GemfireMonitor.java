@@ -10,27 +10,28 @@ import com.singularity.ee.agent.systemagent.api.exception.TaskExecutionException
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static de.novatec.appdynamics.extensions.gemfire.util.Utils.*;
-import static de.novatec.appdynamics.extensions.gemfire.util.Contants.*;
+import static de.novatec.appdynamics.extensions.gemfire.util.Constants.*;
 
 /**
- * Created by stefan on 09.08.17.
+ * Base monitoring extension class.
+ *
+ * @author Stefan Siegl (sieglst@googlemail.com)
+ * @author Stefan Siegl - APM competence group NovaTec Consulting (stefan.siegl@novatec-gmbh.de)
  */
 public class GemfireMonitor extends AManagedMonitor {
 
     private static final Logger logger = LoggerFactory.getLogger(GemfireMonitor.class);
     private MonitorConfiguration configuration;
 
-    public GemfireMonitor(){
+    public GemfireMonitor() {
         logger.info(getLogVersion());
     }
 
-    public TaskOutput execute (Map<String, String> map, TaskExecutionContext taskExecutionContext) throws
+    public TaskOutput execute(Map<String, String> map, TaskExecutionContext taskExecutionContext) throws
             TaskExecutionException {
         logger.info(getLogVersion());
         if (logger.isDebugEnabled()) {
@@ -48,7 +49,7 @@ public class GemfireMonitor extends AManagedMonitor {
         return null;
     }
 
-    private void initialize (Map<String, String> argsMap) {
+    private void initialize(Map<String, String> argsMap) {
         if (configuration == null) {
             MetricWriteHelper metricWriter = MetricWriteHelperFactory.create(this);
 
@@ -63,36 +64,31 @@ public class GemfireMonitor extends AManagedMonitor {
                     .CONFIG_YML, MonitorConfiguration.ConfItem.HTTP_CLIENT, MonitorConfiguration.ConfItem
                     .EXECUTOR_SERVICE);
 
-            this.configuration = conf;
+            configuration = conf;
         }
     }
 
     /**
-     * Spawns a thread per defined server inside the configuration.
+     * Spawns a thread per defined server entry inside the configuration.
      */
     private class RunOneTaskPerDefinedServer implements Runnable {
-        public void run () {
+        public void run() {
             Map<String, ?> config = configuration.getConfigYml();
             if (config != null) {
                 List<Map> servers = (List) config.get(CONFIG_SERVER);
                 if (servers != null && !servers.isEmpty()) {
                     for (Map server : servers) {
-                        //try {
-                            GemFireMonitorTask task = new GemFireMonitorTask.Builder().
-                                    serverInformation(server).
-                                    metricInformation((Map) config.get("metrics")).
-                                    metricWriter(configuration.getMetricWriter()).
-                                    metricPrefix(configuration.getMetricPrefix()).
-                                    build();
+                        GemFireMonitorTask task = new GemFireMonitorTask.Builder().
+                                serverInformation(server).
+                                metricInformation((Map) config.get("metrics")).
+                                metricWriter(configuration.getMetricWriter()).
+                                metricPrefix(configuration.getMetricPrefix()).
+                                build();
 
-                            configuration.getExecutorService().execute(task);
-//                        } catch (IOException e) {
-//                            logger.error("Cannot construct JMX uri for {}", convertToString(server.get("displayName")
-//                                    , ""));
-//                        }
+                        configuration.getExecutorService().execute(task);
                     }
                 } else {
-                    logger.error("There are no servers configured");
+                    logger.error("There are no servers configured, the extension will not run.");
                 }
             } else {
                 logger.error("The config.yml is not loaded due to previous errors.The task will not run");
@@ -100,15 +96,20 @@ public class GemfireMonitor extends AManagedMonitor {
         }
     }
 
-    private static String getImplementationVersion () {
+    private static String getImplementationVersion() {
         return GemfireMonitor.class.getPackage().getImplementationTitle();
     }
 
-    private String getLogVersion () {
+    private String getLogVersion() {
         return "Using GemFire/Apache Geode Monitor Version [" + getImplementationVersion() + "]";
     }
 
-    public static void main (String[] args) throws TaskExecutionException {
+    /**
+     * For local/offline testing purposes.
+     * @param args not used.
+     * @throws TaskExecutionException in case of errors.
+     */
+    public static void main(String[] args) throws TaskExecutionException {
         GemfireMonitor gemfireMonitor = new GemfireMonitor();
         Map<String, String> argsMap = new HashMap<String, String>();
         argsMap.put("config-file", "/Users/stefan/Projekte/Daimler/appd/gemfire-monitoring-extension" +
