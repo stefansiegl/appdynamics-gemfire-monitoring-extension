@@ -11,6 +11,10 @@ public class GemfireTestCluster {
 
     List<Server> servers = Arrays.asList(new Server("server1", 40000, 1099));
 
+    public static void main(String[] args) {
+        new GemfireTestCluster().start();
+    }
+
     public void start() {
         for (Server server : servers) {
             server.start();
@@ -21,9 +25,5 @@ public class GemfireTestCluster {
         for (Server server : servers) {
             server.stop();
         }
-    }
-
-    public static void main(String[] args) {
-        new GemfireTestCluster().start();
     }
 }

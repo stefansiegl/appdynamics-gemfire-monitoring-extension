@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.management.*;
+import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
@@ -16,10 +16,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
- *  Dynamic proxy for the connection to the JMX server that allows for transparent retry operations in case one request fails.
+ * Dynamic proxy for the connection to the JMX server that allows for transparent retry operations in case one request fails.
  *
  * @author Stefan Siegl (sieglst@googlemail.com)
  * @author Stefan Siegl - APM competence group NovaTec Consulting (stefan.siegl@novatec-gmbh.de)
@@ -48,15 +47,15 @@ public class RetryMBeanConnection implements InvocationHandler {
      * in case of temporary connection problems.
      *
      * @param serviceUrl the connection URL to the JMX server
-     * @param username the username
-     * @param password the passwort
+     * @param username   the username
+     * @param password   the passwort
      * @return a proxied MBeanServerConnection that automatically and transparently to the client performs reconnects
      * in case of temporary connection problems.
      * @throws IOException thrown if after a number of retries connection problems still exist.
      */
-    public static MBeanServerConnection getRetryConnectionFor (@Nonnull JMXServiceURL serviceUrl, String username, String password) throws IOException {
+    public static MBeanServerConnection getRetryConnectionFor(@Nonnull JMXServiceURL serviceUrl, String username, String password) throws IOException {
         RetryMBeanConnection retryMBeanConnection = new RetryMBeanConnection(serviceUrl, username, password);
-        return (MBeanServerConnection) Proxy.newProxyInstance(MBeanServerConnection.class.getClassLoader(), new Class[] {MBeanServerConnection.class}, retryMBeanConnection);
+        return (MBeanServerConnection) Proxy.newProxyInstance(MBeanServerConnection.class.getClassLoader(), new Class[]{MBeanServerConnection.class}, retryMBeanConnection);
     }
 
 
@@ -72,7 +71,7 @@ public class RetryMBeanConnection implements InvocationHandler {
         connection = connector.getMBeanServerConnection();
     }
 
-    private void resetConnection () {
+    private void resetConnection() {
         connection = null;
         if (connector != null) {
             try {

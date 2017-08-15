@@ -4,8 +4,9 @@ import com.appdynamics.extensions.conf.MonitorConfiguration;
 import com.appdynamics.extensions.util.MetricWriteHelper;
 import de.novatec.appdynamics.extensions.gemfire.gemfire.GemfireTestCluster;
 import de.novatec.appdynamics.extensions.gemfire.util.Constants;
-import org.apache.geode.distributed.ServerLauncher;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -37,7 +38,7 @@ public class GemFireMonitorTaskTest {
             public void run() {
                 // ignore
             }
-        }, new MetricWriteHelper(){
+        }, new MetricWriteHelper() {
             // ignore
         });
         configuration.setConfigYml("src/test/resources/config.yml");
@@ -49,10 +50,10 @@ public class GemFireMonitorTaskTest {
     }
 
     @Test
-    public void runExtractor () {
+    public void runExtractor() {
         GemFireMonitorTask task = new GemFireMonitorTask.Builder()
                 .metricInformation((Map) configuration.getConfigYml().get(Constants.CONFIG_METRICS))
-                .serverInformation((Map)((List) configuration.getConfigYml().get(Constants.CONFIG_SERVER)).get(0))
+                .serverInformation((Map) ((List) configuration.getConfigYml().get(Constants.CONFIG_SERVER)).get(0))
                 .metricPrefix(configuration.getMetricPrefix())
                 .metricWriter(spiedWriter)
                 .build();

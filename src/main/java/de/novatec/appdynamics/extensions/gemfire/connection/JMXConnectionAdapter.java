@@ -1,14 +1,11 @@
 package de.novatec.appdynamics.extensions.gemfire.connection;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import javax.management.*;
-import javax.management.Attribute;
-import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Connection to the JMX server. This class utilizes a retry mechanism in order to allow temporary connection problems
@@ -26,45 +23,7 @@ public class JMXConnectionAdapter {
     String host;
     MBeanServerConnection connection;
 
-    private JMXConnectionAdapter() {}
-
-    public static class Builder {
-        JMXConnectionAdapter adapter = new JMXConnectionAdapter();
-
-        public Builder user (String username) {
-            adapter.username = username;
-            return this;
-        }
-
-        public Builder host (String host) {
-            adapter.host = host;
-            return this;
-        }
-
-        public Builder port (int port) {
-            adapter.port = port;
-            return this;
-        }
-
-        public Builder password (String password) {
-            adapter.password = password;
-            return this;
-        }
-
-        public Builder serviceUrl (JMXServiceURL serviceUrl) {
-            adapter.serviceUrl = serviceUrl;
-            return this;
-        }
-
-        public JMXConnectionAdapter connect () throws IOException {
-            if (adapter.serviceUrl == null) {
-                adapter.serviceUrl = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + adapter.host + ":" + adapter.port + "/jmxrmi");
-            }
-
-            adapter.connection = RetryMBeanConnection.getRetryConnectionFor(adapter.serviceUrl, adapter.username, adapter.password);
-
-            return adapter;
-        }
+    private JMXConnectionAdapter() {
     }
 
     /**
@@ -105,12 +64,51 @@ public class JMXConnectionAdapter {
         return new HashMap<String, Map<String, Object>>();
     }
 
-    private String[] attributeInfosToStringArray (MBeanAttributeInfo[] attInfos) {
+    private String[] attributeInfosToStringArray(MBeanAttributeInfo[] attInfos) {
         String[] attNames = new String[attInfos.length];
         int i = 0;
         for (MBeanAttributeInfo attInfo : attInfos) {
             attNames[i++] = attInfo.getName();
         }
         return attNames;
+    }
+
+    public static class Builder {
+        JMXConnectionAdapter adapter = new JMXConnectionAdapter();
+
+        public Builder user(String username) {
+            adapter.username = username;
+            return this;
+        }
+
+        public Builder host(String host) {
+            adapter.host = host;
+            return this;
+        }
+
+        public Builder port(int port) {
+            adapter.port = port;
+            return this;
+        }
+
+        public Builder password(String password) {
+            adapter.password = password;
+            return this;
+        }
+
+        public Builder serviceUrl(JMXServiceURL serviceUrl) {
+            adapter.serviceUrl = serviceUrl;
+            return this;
+        }
+
+        public JMXConnectionAdapter connect() throws IOException {
+            if (adapter.serviceUrl == null) {
+                adapter.serviceUrl = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + adapter.host + ":" + adapter.port + "/jmxrmi");
+            }
+
+            adapter.connection = RetryMBeanConnection.getRetryConnectionFor(adapter.serviceUrl, adapter.username, adapter.password);
+
+            return adapter;
+        }
     }
 }

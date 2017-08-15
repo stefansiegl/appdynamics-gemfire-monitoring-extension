@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static de.novatec.appdynamics.extensions.gemfire.util.Constants.*;
+import static de.novatec.appdynamics.extensions.gemfire.util.Constants.CONFIG_SERVER;
 
 /**
  * Base monitoring extension class.
@@ -29,6 +29,24 @@ public class GemfireMonitor extends AManagedMonitor {
 
     public GemfireMonitor() {
         logger.info(getLogVersion());
+    }
+
+    private static String getImplementationVersion() {
+        return GemfireMonitor.class.getPackage().getImplementationTitle();
+    }
+
+    /**
+     * For local/offline testing purposes.
+     *
+     * @param args not used.
+     * @throws TaskExecutionException in case of errors.
+     */
+    public static void main(String[] args) throws TaskExecutionException {
+        GemfireMonitor gemfireMonitor = new GemfireMonitor();
+        Map<String, String> argsMap = new HashMap<String, String>();
+        argsMap.put("config-file", "/Users/stefan/Projekte/Daimler/appd/gemfire-monitoring-extension" +
+                "" + "" + "/src/main/resources/conf/config.yml");
+        gemfireMonitor.execute(argsMap, null);
     }
 
     public TaskOutput execute(Map<String, String> map, TaskExecutionContext taskExecutionContext) throws
@@ -68,6 +86,10 @@ public class GemfireMonitor extends AManagedMonitor {
         }
     }
 
+    private String getLogVersion() {
+        return "Using GemFire/Apache Geode Monitor Version [" + getImplementationVersion() + "]";
+    }
+
     /**
      * Spawns a thread per defined server entry inside the configuration.
      */
@@ -94,26 +116,5 @@ public class GemfireMonitor extends AManagedMonitor {
                 logger.error("The config.yml is not loaded due to previous errors.The task will not run");
             }
         }
-    }
-
-    private static String getImplementationVersion() {
-        return GemfireMonitor.class.getPackage().getImplementationTitle();
-    }
-
-    private String getLogVersion() {
-        return "Using GemFire/Apache Geode Monitor Version [" + getImplementationVersion() + "]";
-    }
-
-    /**
-     * For local/offline testing purposes.
-     * @param args not used.
-     * @throws TaskExecutionException in case of errors.
-     */
-    public static void main(String[] args) throws TaskExecutionException {
-        GemfireMonitor gemfireMonitor = new GemfireMonitor();
-        Map<String, String> argsMap = new HashMap<String, String>();
-        argsMap.put("config-file", "/Users/stefan/Projekte/Daimler/appd/gemfire-monitoring-extension" +
-                "" + "" + "/src/main/resources/conf/config.yml");
-        gemfireMonitor.execute(argsMap, null);
     }
 }

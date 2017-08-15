@@ -40,7 +40,7 @@ public class GemFireMonitorTask implements Runnable {
         try {
             con = connect(serverInformation);
             if (logger.isDebugEnabled()) {
-                logger.debug("Successfully connected to JMXServer "+serverName);
+                logger.debug("Successfully connected to JMXServer " + serverName);
             }
 
             // A bit ugly without any type safety, but I decided to keep with the other AppDynamics extensions and
@@ -94,7 +94,7 @@ public class GemFireMonitorTask implements Runnable {
                         }
 
 
-                        BigDecimal value =  typeFormatter.convert(attValue, scale);
+                        BigDecimal value = typeFormatter.convert(attValue, scale);
 
                         // Right now we use the same aggregation format for all metrics. If different formats are
                         // in fact necessary, this information should be moved to the configuration part.

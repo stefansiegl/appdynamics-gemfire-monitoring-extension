@@ -21,17 +21,17 @@ public class Server {
         this.port = port;
         this.jmxPort = jmxPort;
 
-        File workingDir = new File("target/"+name).getAbsoluteFile();
+        File workingDir = new File("target/" + name).getAbsoluteFile();
         workingDir.mkdirs();
 
-        ServerLauncher serverLauncher  = new ServerLauncher.Builder()
+        ServerLauncher serverLauncher = new ServerLauncher.Builder()
                 .setMemberName(name)
                 .setServerPort(port)
                 .set("jmx-manager", "true")
                 .set("jmx-manager-start", "true")
-                .set("jmx-manager-port", ""+jmxPort)
+                .set("jmx-manager-port", "" + jmxPort)
                 .set("deploy-working-dir", workingDir.toString())
-                .set("log-file", workingDir.toString()+"/"+name+".log")
+                .set("log-file", workingDir.toString() + "/" + name + ".log")
                 .setWorkingDirectory(workingDir.toString())
                 .build();
 
@@ -40,14 +40,14 @@ public class Server {
 
     public void start() {
         ServerLauncher.ServerState state = launcher.start();
-        if (! AbstractLauncher.Status.ONLINE.equals(state.getStatus())) {
+        if (!AbstractLauncher.Status.ONLINE.equals(state.getStatus())) {
             logger.warn("Could not start server, name: {} port: {}", name, port);
         }
     }
 
     public void stop() {
         ServerLauncher.ServerState state = launcher.stop();
-        if (! AbstractLauncher.Status.STOPPED.equals(state.getStatus())) {
+        if (!AbstractLauncher.Status.STOPPED.equals(state.getStatus())) {
             logger.warn("Could not stop server, name: {} port: {}", name, port);
         }
     }

@@ -25,15 +25,15 @@ public class AppDTypeFormatter {
      * Converts the given numerical value to BigDecimal (necessary for AppDynamics) and applies the scaling factor. Do
      * note that AppDynamics (4.3) does not support sting-based values.
      *
-     * @param o the numerical object.
+     * @param o     the numerical object.
      * @param scale the scaling factor.
      * @return BigDecimal of the value.
      */
-    public BigDecimal convert (Object o, int scale) throws InvalidAppDMetricTypeException {
+    public BigDecimal convert(Object o, int scale) throws InvalidAppDMetricTypeException {
         if (o instanceof Long) {
             return BigDecimal.valueOf(((Long) o) * scale);
         } else if (o instanceof Integer) {
-            return BigDecimal.valueOf(new Long (((Integer) o) * scale));
+            return BigDecimal.valueOf(new Long(((Integer) o) * scale));
         } else if (o instanceof Float) {
             Float f = (Float) o;
             float val = f.floatValue() * scale;
@@ -43,10 +43,10 @@ public class AppDTypeFormatter {
             double val = d.doubleValue() * scale;
             return BigDecimal.valueOf(new Double(val).longValue());
         } else if (o instanceof String) {
-            throw new InvalidAppDMetricTypeException("String values cannot be used as metrics for AppDynamics. Current string value is "+o);
+            throw new InvalidAppDMetricTypeException("String values cannot be used as metrics for AppDynamics. Current string value is " + o);
         }
 
-        logger.warn("Unknown numerical class pattern, please provide a mapping to BigDecimal for class: "+o.getClass().getName()+" with value "+o+". Trying a direct cast");
+        logger.warn("Unknown numerical class pattern, please provide a mapping to BigDecimal for class: " + o.getClass().getName() + " with value " + o + ". Trying a direct cast");
         return (BigDecimal) o;
     }
 
@@ -56,7 +56,7 @@ public class AppDTypeFormatter {
      * @param objectName the object name
      * @return formatted string.
      */
-    public String formatObjectName (String objectName) {
+    public String formatObjectName(String objectName) {
         // GemFire:service=System,type=Distributed
         if (PATTERN_SYSTEM.matcher(objectName).matches()) {
             return "System";
@@ -65,19 +65,19 @@ public class AppDTypeFormatter {
         // GemFire:service=Region,name=/regionA,type=Member,member=server1
         Matcher regionServerDetails = PATTERN_REGION_SERVER_DETAIL.matcher(objectName);
         if (regionServerDetails.matches()) {
-            return "RegionServerDetails|"+regionServerDetails.group(1)+"|"+regionServerDetails.group(2);
+            return "RegionServerDetails|" + regionServerDetails.group(1) + "|" + regionServerDetails.group(2);
         }
 
         // GemFire:service=Region,name=/regionA,type=Distributed
         Matcher regionDetails = PATTERN_REGION_DETAILS.matcher(objectName);
         if (regionDetails.matches()) {
-            return "Regions|"+regionDetails.group(1);
+            return "Regions|" + regionDetails.group(1);
         }
 
         // GemFire:type=Member,member=locator1
         Matcher serverDetails = PATTERN_SERVER.matcher(objectName);
         if (serverDetails.matches()) {
-            return "ServerDetails|"+serverDetails.group(1);
+            return "ServerDetails|" + serverDetails.group(1);
         }
 
         // else - new pattern that I did not think on ;)
