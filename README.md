@@ -27,6 +27,15 @@ Install the extension
 Copy and extract the GemFireMonitor-<version>.zip in the monitors folder of the machine agent. (This should create a
 GemFire folder within the monitors folder).
 
+Please ensure that you started the machine agent with high enough metric limit (https://docs.appdynamics.com/display/PRO43/Metrics+Limits)
+Depending on our Gemfire/Geode cluster size and the configuration settings, this extension might create hundreds or thousand
+of metrics.
+
+Please start your machine agent accordingly:
+```
+nohup java -Dappdynamics.agent.maxMetrics=2000 -jar machineagent.jar &
+```
+
 Configuration
 -------------
 The configuration file (monitors/Gemfire/config.yml) defines which metrics you want to capture, where your GemFire cluster are running and
