@@ -1,8 +1,7 @@
-AppDynamics Monitoring Extension for use with Pivotal GemFire/Apache Geode
-==========================================================================
+# AppDynamics Monitoring Extension for use with Pivotal GemFire/Apache Geode
 
-Use Case
---------
+## Use Case
+
 This AppDynamics extension allows to retrieve monitoring information from Pivotal Gemfire and Apache Geode.
  
 The extension connects to the JMX manager (provided by the Geode locators) and retrieve the information. The list of available metrics is 
@@ -10,20 +9,20 @@ available here:
 
 https://geode.apache.org/docs/guide/11/managing/management/list_of_mbeans.html
 
-Prerequisites
---------------
+![alt Sample Dashboard in AppDynamics](images/SampleDashboard.png)
+
+## Prerequisites
+
 None. 
 
-Build the extension
--------------------
+## Build the extension
 The project is built using Apache Maven. Run "mvn -Dmaven.test.skip=true install". You find the extension at target/GemFireMonitor-x.zip
 
 Please note that the tests within this project programmatically create a Gemfire cluster. In order to retrieve the 
 Gemfire dependencies for this test, some setup steps are necessary to authenticate against the commercial repository
 of Pivotal. Please see the "Development section" if you want to run the build including the integration test.
 
-Install the extension
----------------------
+## Install the extension
 Copy and extract the GemFireMonitor-<version>.zip in the monitors folder of the machine agent. (This should create a
 GemFire folder within the monitors folder).
 
@@ -36,8 +35,8 @@ Please start your machine agent accordingly:
 nohup java -Dappdynamics.agent.maxMetrics=2000 -jar machineagent.jar &
 ```
 
-Configuration
--------------
+## Configuration
+
 The configuration file (monitors/Gemfire/config.yml) defines which metrics you want to capture, where your GemFire cluster are running and
 what credentials you need in order to connect.
 
@@ -95,8 +94,12 @@ metrics:
 
 To remove an attribute or a block, simply remove or comment it.
 
-Development
--------
+## Resources:
+
+I also wrote a blog post about the extension that you can read at http://blog.novatec-gmbh.de/appdynamics-monitoring-extension-pivotal-gemfire-apache-geode/ 
+
+## Development
+
 To safeguard the code a local integration is setup with the project. This spawns a local Gemfire cluster and runs
 the extension to retrieve data. 
 
@@ -107,13 +110,13 @@ can be retrieved (https://gemfire.docs.pivotal.io/gemfire/getting_started/instal
 For you to run this project you need to follow this guide: Create a Pivotal account, setup the security configuration
 in maven and you are good to go.
 
-License
--------
+## License
+
 Licensed under Apache License Version 2.0.
 
 
-Optimizations / ToDos
----------------------
+## Optimizations / ToDos
+
 This section lists possible improvements that could be done:
 
 * Allow to integrate a backup server (e.g. a second locator) that takes over if the initially given server is not 
