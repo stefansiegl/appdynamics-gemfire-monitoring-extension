@@ -35,20 +35,6 @@ public class GemfireMonitor extends AManagedMonitor {
         return GemfireMonitor.class.getPackage().getImplementationTitle();
     }
 
-    /**
-     * For local/offline testing purposes.
-     *
-     * @param args not used.
-     * @throws TaskExecutionException in case of errors.
-     */
-    public static void main(String[] args) throws TaskExecutionException {
-        GemfireMonitor gemfireMonitor = new GemfireMonitor();
-        Map<String, String> argsMap = new HashMap<String, String>();
-        argsMap.put("config-file", "/Users/stefan/Projekte/Daimler/appd/gemfire-monitoring-extension" +
-                "" + "" + "/src/main/resources/conf/config.yml");
-        gemfireMonitor.execute(argsMap, null);
-    }
-
     public TaskOutput execute(Map<String, String> map, TaskExecutionContext taskExecutionContext) throws
             TaskExecutionException {
         logger.info(getLogVersion());
@@ -116,5 +102,19 @@ public class GemfireMonitor extends AManagedMonitor {
                 logger.error("The config.yml is not loaded due to previous errors.The task will not run");
             }
         }
+    }
+
+    /**
+     * For local/offline testing purposes.
+     *
+     * @param args not used.
+     * @throws TaskExecutionException in case of errors.
+     */
+    public static void main(String[] args) throws TaskExecutionException {
+        GemfireMonitor gemfireMonitor = new GemfireMonitor();
+        Map<String, String> argsMap = new HashMap<String, String>();
+        argsMap.put("config-file", "/Users/stefan/Projekte/Daimler/appd/gemfire-monitoring-extension" +
+                "" + "" + "/src/main/resources/conf/config.yml");
+        gemfireMonitor.execute(argsMap, null);
     }
 }

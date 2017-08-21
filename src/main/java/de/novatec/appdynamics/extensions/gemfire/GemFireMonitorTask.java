@@ -57,11 +57,13 @@ public class GemFireMonitorTask implements Runnable {
                 Map<String, Map<String, Object>> attributeValues = null;
                 try {
                     attributeValues = con.getAllAttributeValues(mbean);
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Read jmx values from given mbean. ", attributeValues);
-                    }
                 } catch (IOException e) {
                     e.printStackTrace();
+                }
+
+                if (null == attributeValues) {
+                    logger.warn("Could not read any data for section {} using mbean expression {}", metricSectionName, mbean);
+                    return;
                 }
 
                 for (String objectName : attributeValues.keySet()) {

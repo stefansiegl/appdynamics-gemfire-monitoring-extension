@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Initializes a test cluster for the local unit tests.
+ */
 public class GemfireTestCluster {
     private static final Logger logger = LoggerFactory.getLogger(GemfireTestCluster.class);
 
