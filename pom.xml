@@ -6,12 +6,13 @@
 
     <groupId>de.novatec.appdynamics</groupId>
     <artifactId>gemfire-monitoring-extension</artifactId>
-    <version>2.0.5</version>
+    <version>0.9</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
         <target.dir>${project.build.directory}/GemFireMonitor</target.dir>
+        <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
     </properties>
 
     <dependencies>
@@ -77,7 +78,38 @@
             <version>1.9.0</version>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.geode/gemfire-core -->
+        <!-- https://mvnrepository.com/artifact/org.apache.geode/geode-core -->
         <dependency>
+            <groupId>org.apache.geode</groupId>
+            <artifactId>geode-core</artifactId>
+            <version>1.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.geode/geode-common -->
+        <dependency>
+            <groupId>org.apache.geode</groupId>
+            <artifactId>geode-common</artifactId>
+            <version>1.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.geode/geode-wan -->
+        <dependency>
+            <groupId>org.apache.geode</groupId>
+            <artifactId>geode-wan</artifactId>
+            <version>1.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.geode/geode-cq -->
+        <dependency>
+            <groupId>org.apache.geode</groupId>
+            <artifactId>geode-cq</artifactId>
+            <version>1.2.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- use this if you want to test against the Pivotal Gemfire instead of Apache Geode -->
+        <!-- <dependency>
             <groupId>io.pivotal.gemfire</groupId>
             <artifactId>geode-core</artifactId>
             <version>9.0.0</version>
@@ -95,7 +127,8 @@
             <version>9.0.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+        -->
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
@@ -187,7 +220,7 @@
                                     <fileset dir="${project.build.directory}"
                                              includes="${project.artifactId}.${project.packaging}"/>
                                 </copy>
-                                <zip destfile="${target.dir}-${project.version}.zip">
+                                <zip destfile="${target.dir}-${project.version}-${maven.build.timestamp}.zip">
                                     <zipfileset dir="${target.dir}" filemode="755" prefix="GemFireMonitor/"/>
                                 </zip>
                                 <delete dir="${target.dir}"/>
@@ -224,11 +257,12 @@
             </snapshots>
             <url>https://github.com/Appdynamics/maven-repo/raw/master/releases</url>
         </repository>
-        <repository>
+        <!-- Pivotal repository - only necessary if you want to test against Pivotals binaries -->
+        <!-- <repository>
             <id>gemfire-release-repo</id>
             <name>Pivotal GemFire Release Repository</name>
             <url>https://commercial-repo.pivotal.io/data3/gemfire-release-repo/gemfire</url>
-        </repository>
+        </repository> -->
     </repositories>
 
 </project>

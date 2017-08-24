@@ -16,11 +16,7 @@ https://geode.apache.org/docs/guide/11/managing/management/list_of_mbeans.html
 None. 
 
 ## Build the extension
-The project is built using Apache Maven. Run "mvn -Dmaven.test.skip=true install". You find the extension at target/GemFireMonitor-x.zip
-
-Please note that the tests within this project programmatically create a Gemfire cluster. In order to retrieve the 
-Gemfire dependencies for this test, some setup steps are necessary to authenticate against the commercial repository
-of Pivotal. Please see the "Development section" if you want to run the build including the integration test.
+The project is built using Apache Maven. Run "mvn clean install". You find the extension at target/GemFireMonitor-x.zip
 
 ## Install the extension
 Copy and extract the GemFireMonitor-<version>.zip in the monitors folder of the machine agent. (This should create a
@@ -101,14 +97,14 @@ I also wrote a blog post about the extension that you can read at http://blog.no
 ## Development
 
 To safeguard the code a local integration is setup with the project. This spawns a local Gemfire cluster and runs
-the extension to retrieve data. 
+the extension to retrieve data. This cluster is run based on Apache Geode as these dependencies are easier to integrate.
 
-Thus for the testing phase, Gemfire libraries are needed. Pivotal provides these libraries with their commercial
+You can also change the testing to use Pivotals binaries.
+Pivotal provides these libraries with their commercial
 repository at https://commercial-repo.pivotal.io/. Pivotal created a nice documentation on how these libraries
-can be retrieved (https://gemfire.docs.pivotal.io/gemfire/getting_started/installation/obtain_gemfire_maven.html).
-
-For you to run this project you need to follow this guide: Create a Pivotal account, setup the security configuration
-in maven and you are good to go.
+can be retrieved (https://gemfire.docs.pivotal.io/gemfire/getting_started/installation/obtain_gemfire_maven.html). For you to run this
+project you need to follow this guide: Create a Pivotal account, setup the security configuration
+in maven and you are good to go. In the pom.xml the configuration for pivotal is already integrated. Uncomment it to take effect.
 
 ## License
 
