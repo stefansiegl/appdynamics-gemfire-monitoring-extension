@@ -1,6 +1,10 @@
 package de.novatec.appdynamics.extensions.gemfire.connection;
 
+import com.google.common.base.Strings;
+
 import javax.management.*;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.util.HashMap;
@@ -22,9 +26,7 @@ public class JMXConnectionAdapter {
     int port;
     String host;
     MBeanServerConnection connection;
-
-    private JMXConnectionAdapter() {
-    }
+    private JMXConnector connector;
 
     /**
      * Retrieves all attribute values for the given MBean expression. Note that the mbean expression may have
@@ -35,6 +37,10 @@ public class JMXConnectionAdapter {
      * @throws IOException In case of connection problems.
      */
     public Map<String, Map<String, Object>> getAllAttributeValues(String mbean) throws IOException {
+        if (!connected()) {
+            newConnection();
+        }
+
         Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
         try {
             final Set<ObjectInstance> objectInstances = connection.queryMBeans(new ObjectName(mbean), null);
@@ -64,6 +70,21 @@ public class JMXConnectionAdapter {
         return new HashMap<String, Map<String, Object>>();
     }
 
+    /**
+     * Close the connection after use.
+     */
+    public void close() {
+        connection = null;
+        if (connector != null) {
+            try {
+                connector.close();
+                connector = null;
+            } catch (IOException e) {
+                // could not close - ignore.
+            }
+        }
+    }
+
     private String[] attributeInfosToStringArray(MBeanAttributeInfo[] attInfos) {
         String[] attNames = new String[attInfos.length];
         int i = 0;
@@ -71,6 +92,22 @@ public class JMXConnectionAdapter {
             attNames[i++] = attInfo.getName();
         }
         return attNames;
+    }
+
+    private boolean connected () {
+        return connector != null;
+    }
+
+    private void newConnection() throws IOException {
+        final Map<String, Object> env = new HashMap<String, Object>();
+        if (!Strings.isNullOrEmpty(username)) {
+            env.put(JMXConnector.CREDENTIALS, new String[]{username, password});
+            connector = JMXConnectorFactory.connect(serviceUrl, env);
+        } else {
+            connector = JMXConnectorFactory.connect(serviceUrl);
+        }
+
+        connection = connector.getMBeanServerConnection();
     }
 
     public static class Builder {
@@ -101,12 +138,10 @@ public class JMXConnectionAdapter {
             return this;
         }
 
-        public JMXConnectionAdapter connect() throws IOException {
+        public JMXConnectionAdapter build() throws IOException {
             if (adapter.serviceUrl == null) {
                 adapter.serviceUrl = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + adapter.host + ":" + adapter.port + "/jmxrmi");
             }
-
-            adapter.connection = RetryMBeanConnection.getRetryConnectionFor(adapter.serviceUrl, adapter.username, adapter.password);
 
             return adapter;
         }

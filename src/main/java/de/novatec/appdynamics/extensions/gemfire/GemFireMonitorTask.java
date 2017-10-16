@@ -58,6 +58,7 @@ public class GemFireMonitorTask implements Runnable {
                 try {
                     attributeValues = con.getAllAttributeValues(mbean);
                 } catch (IOException e) {
+                    logger.error("Could not read attribute values.", e);
                     e.printStackTrace();
                 }
 
@@ -113,6 +114,7 @@ public class GemFireMonitorTask implements Runnable {
             logger.error("Error in Gemfire/Geode Monitor for Server {}", serverName, e);
         } finally {
             logger.debug("Finished Running Gemfire/Geode Monitor for server {}", serverName);
+            con.close();
         }
     }
 
@@ -126,7 +128,7 @@ public class GemFireMonitorTask implements Runnable {
                 port((Integer) serverInformation.get(CONFIG_SERVER_PORT)).
                 user((String) serverInformation.get(CONFIG_SERVER_USER)).
                 password((String) serverInformation.get(CONFIG_SERVER_PASSWORD)).
-                connect();
+                build();
     }
 
     static class Builder {

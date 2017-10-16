@@ -20,8 +20,10 @@ import java.util.Map;
 /**
  * Dynamic proxy for the connection to the JMX server that allows for transparent retry operations in case one request fails.
  *
+ * Currently not in use.
+ *
  * @author Stefan Siegl (sieglst@googlemail.com)
- * @author Stefan Siegl - APM competence group NovaTec Consulting (stefan.siegl@novatec-gmbh.de)
+ * @author Stefan Siegl - APM competence group  NovaTec Consulting (stefan.siegl@novatec-gmbh.de)
  */
 public class RetryMBeanConnection implements InvocationHandler {
 
@@ -58,19 +60,6 @@ public class RetryMBeanConnection implements InvocationHandler {
         return (MBeanServerConnection) Proxy.newProxyInstance(MBeanServerConnection.class.getClassLoader(), new Class[]{MBeanServerConnection.class}, retryMBeanConnection);
     }
 
-
-    private void newConnection() throws IOException {
-        final Map<String, Object> env = new HashMap<String, Object>();
-        if (!Strings.isNullOrEmpty(username)) {
-            env.put(JMXConnector.CREDENTIALS, new String[]{username, password});
-            connector = JMXConnectorFactory.connect(serviceUrl, env);
-        } else {
-            connector = JMXConnectorFactory.connect(serviceUrl);
-        }
-
-        connection = connector.getMBeanServerConnection();
-    }
-
     private void resetConnection() {
         connection = null;
         if (connector != null) {
@@ -85,7 +74,7 @@ public class RetryMBeanConnection implements InvocationHandler {
 
     private MBeanServerConnection getConnection() throws IOException {
         if (connection == null) {
-            newConnection();
+           // newConnection();
         }
         return connection;
     }
@@ -100,7 +89,7 @@ public class RetryMBeanConnection implements InvocationHandler {
             errorCount++;
             if (errorCount <= MAXIMUM_RETRIES) {
                 logger.debug("Got IOException calling to JMX server for Method " + method + " retrying.");
-                newConnection();
+            //    newConnection();
                 invoke(proxy, method, args);
             } else {
                 logger.error("Multiple tries to connect to the JMX server failed. ", e);
